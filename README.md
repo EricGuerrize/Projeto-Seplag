@@ -30,7 +30,9 @@ src/
 │   └── tutorServico.ts
 ├── fachadas/             # Padrão Facade para gerenciamento de estado
 ├── contextos/            # Contextos React
+│   └── AutenticacaoContexto.tsx
 ├── hooks/                # Hooks customizados
+│   └── useAuth.ts
 ├── tipos/                # Interfaces e tipos TypeScript
 │   ├── pet.ts
 │   ├── tutor.ts
@@ -61,6 +63,12 @@ src/
 - [x] Serviço de autenticação (login, renovação de token, logout)
 - [x] Serviço de pets (CRUD completo, upload de fotos)
 - [x] Serviço de tutores (CRUD completo, upload de fotos, vinculação de pets)
+
+### Autenticação
+- [x] Contexto de autenticação (AutenticacaoContexto)
+- [x] Hook useAuth para facilitar acesso ao contexto
+- [x] Gerenciamento de estado de autenticação
+- [x] Verificação automática de token ao carregar aplicação
 
 ## Como Executar
 
@@ -122,7 +130,6 @@ A aplicação consome a API pública disponível em:
 
 ## Próximos Passos
 
-- [ ] Contexto de autenticação e hook useAuth
 - [ ] Padrão Facade para gerenciamento de estado
 - [ ] Componentes reutilizáveis (Botão, Card, Input, Modal)
 - [ ] Página de Login
