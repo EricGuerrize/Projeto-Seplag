@@ -1,73 +1,143 @@
-# React + TypeScript + Vite
+# Gerenciador de Pets - Projeto SEPLAG
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sistema de registro público de Pets e seus Tutores desenvolvido para o Estado de Mato Grosso.
 
-Currently, two official plugins are available:
+## Sobre o Projeto
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Aplicação SPA (Single Page Application) desenvolvida em React com TypeScript para gerenciamento de pets e tutores, consumindo a API pública disponível em `https://pet-manager-api.geia.vip`.
 
-## React Compiler
+## Tecnologias Utilizadas
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **React 19** - Framework JavaScript para construção da interface
+- **TypeScript** - Tipagem estática para JavaScript
+- **Vite** - Ferramenta de build e desenvolvimento
+- **Tailwind CSS** - Framework CSS utilitário para estilização
+- **React Router DOM** - Roteamento de páginas
+- **Axios** - Cliente HTTP para requisições à API
+- **Vitest** - Framework de testes unitários
+- **React Testing Library** - Biblioteca para testes de componentes
 
-## Expanding the ESLint configuration
+## Estrutura do Projeto
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── componentes/          # Componentes reutilizáveis da interface
+├── paginas/              # Páginas da aplicação
+├── servicos/             # Camada de serviços (chamadas à API)
+│   ├── api.ts            # Configuração do Axios
+│   ├── autenticacaoServico.ts
+│   ├── petServico.ts
+│   └── tutorServico.ts
+├── fachadas/             # Padrão Facade para gerenciamento de estado
+├── contextos/            # Contextos React
+├── hooks/                # Hooks customizados
+├── tipos/                # Interfaces e tipos TypeScript
+│   ├── pet.ts
+│   ├── tutor.ts
+│   ├── autenticacao.ts
+│   └── index.ts
+├── utilitarios/          # Funções utilitárias
+└── testes/               # Testes unitários
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Funcionalidades Implementadas
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Configuração Inicial
+- [x] Projeto React com Vite e TypeScript
+- [x] Tailwind CSS configurado
+- [x] Estrutura de pastas organizada
+- [x] Vitest configurado para testes
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Tipos TypeScript
+- [x] Interfaces para Pet (Pet, PetRequest, PetResponse, PagedPetResponse)
+- [x] Interfaces para Tutor (Tutor, TutorRequest, TutorResponse, PagedTutorResponse)
+- [x] Interfaces para Autenticação (AuthRequest, AuthResponse)
+- [x] Interface Anexo para fotos
+
+### Serviços de API
+- [x] Configuração do Axios com interceptors
+- [x] Interceptor para adicionar token JWT automaticamente
+- [x] Interceptor para renovação automática de token
+- [x] Serviço de autenticação (login, renovação de token, logout)
+- [x] Serviço de pets (CRUD completo, upload de fotos)
+- [x] Serviço de tutores (CRUD completo, upload de fotos, vinculação de pets)
+
+## Como Executar
+
+### Pré-requisitos
+- Node.js 18+ instalado
+- npm ou yarn
+
+### Instalação
+```bash
+npm install
 ```
+
+### Desenvolvimento
+```bash
+npm run dev
+```
+
+A aplicação estará disponível em `http://localhost:5173`
+
+### Build para Produção
+```bash
+npm run build
+```
+
+### Testes
+```bash
+npm test
+```
+
+## API
+
+A aplicação consome a API pública disponível em:
+- Base URL: `https://pet-manager-api.geia.vip`
+- Documentação Swagger: `https://pet-manager-api.geia.vip/q/swagger-ui/`
+
+### Endpoints Principais
+
+#### Autenticação
+- `POST /autenticacao/login` - Realizar login
+- `PUT /autenticacao/refresh` - Renovar token de acesso
+
+#### Pets
+- `GET /v1/pets` - Listar pets (com paginação e busca)
+- `GET /v1/pets/{id}` - Buscar pet por ID
+- `POST /v1/pets` - Cadastrar novo pet
+- `PUT /v1/pets/{id}` - Atualizar pet
+- `DELETE /v1/pets/{id}` - Excluir pet
+- `POST /v1/pets/{id}/fotos` - Adicionar foto ao pet
+
+#### Tutores
+- `GET /v1/tutores` - Listar tutores (com paginação)
+- `GET /v1/tutores/{id}` - Buscar tutor por ID
+- `POST /v1/tutores` - Cadastrar novo tutor
+- `PUT /v1/tutores/{id}` - Atualizar tutor
+- `DELETE /v1/tutores/{id}` - Excluir tutor
+- `POST /v1/tutores/{id}/fotos` - Adicionar foto ao tutor
+- `POST /v1/tutores/{id}/pets/{petId}` - Vincular pet ao tutor
+- `DELETE /v1/tutores/{id}/pets/{petId}` - Desvincular pet do tutor
+
+## Próximos Passos
+
+- [ ] Contexto de autenticação e hook useAuth
+- [ ] Padrão Facade para gerenciamento de estado
+- [ ] Componentes reutilizáveis (Botão, Card, Input, Modal)
+- [ ] Página de Login
+- [ ] Página de listagem de Pets
+- [ ] Página de detalhes do Pet
+- [ ] Página de cadastro/edição de Pet
+- [ ] Página de cadastro/edição de Tutor
+- [ ] Configuração de rotas com lazy loading
+- [ ] Testes unitários
+- [ ] Docker e configuração de deploy
+
+## Autor
+
+Eric Guerrize
+
+## Licença
+
+Este projeto foi desenvolvido para o Processo Seletivo Simplificado da SEPLAG/MT.
