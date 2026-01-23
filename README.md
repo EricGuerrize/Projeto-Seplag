@@ -22,6 +22,10 @@ Aplicação SPA (Single Page Application) desenvolvida em React com TypeScript p
 ```
 src/
 ├── componentes/          # Componentes reutilizáveis da interface
+│   ├── Botao/
+│   ├── Entrada/
+│   ├── Cartao/
+│   └── Carregando/
 ├── paginas/              # Páginas da aplicação
 ├── servicos/             # Camada de serviços (chamadas à API)
 │   ├── api.ts            # Configuração do Axios
@@ -29,6 +33,9 @@ src/
 │   ├── petServico.ts
 │   └── tutorServico.ts
 ├── fachadas/             # Padrão Facade para gerenciamento de estado
+│   ├── usePetsFachada.ts
+│   ├── useTutoresFachada.ts
+│   └── index.ts
 ├── contextos/            # Contextos React
 │   └── AutenticacaoContexto.tsx
 ├── hooks/                # Hooks customizados
@@ -69,6 +76,18 @@ src/
 - [x] Hook useAuth para facilitar acesso ao contexto
 - [x] Gerenciamento de estado de autenticação
 - [x] Verificação automática de token ao carregar aplicação
+
+### Componentes Reutilizáveis
+- [x] Botão (Botao) - com variantes e tamanhos
+- [x] Entrada (Entrada) - input com label e tratamento de erro
+- [x] Cartão (Cartao) - container reutilizável
+- [x] Carregando (Carregando) - indicador de loading
+
+### Padrão Facade (Gerenciamento de Estado)
+- [x] usePetsFachada - gerencia estado e operações de pets
+- [x] useTutoresFachada - gerencia estado e operações de tutores
+- [x] Controle de paginação integrado
+- [x] Tratamento de erros e estado de carregamento
 
 ## Como Executar
 
@@ -130,8 +149,6 @@ A aplicação consome a API pública disponível em:
 
 ## Próximos Passos
 
-- [ ] Padrão Facade para gerenciamento de estado
-- [ ] Componentes reutilizáveis (Botão, Card, Input, Modal)
 - [ ] Página de Login
 - [ ] Página de listagem de Pets
 - [ ] Página de detalhes do Pet
