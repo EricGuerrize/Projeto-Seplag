@@ -1,5 +1,5 @@
 import api from './api'
-import { AuthRequest, AuthResponse, TokenRefreshResponse } from '../tipos'
+import type { AuthRequest, AuthResponse, TokenRefreshResponse } from '../tipos'
 
 export const autenticacaoServico = {
   async login(credenciais: AuthRequest): Promise<AuthResponse> {

@@ -1,4 +1,4 @@
-import { Anexo } from './pet'
+import type { Anexo } from './pet'
 
 export interface PetBasico {
   id: number

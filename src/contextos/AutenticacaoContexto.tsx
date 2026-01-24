@@ -1,6 +1,7 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
+import type { ReactNode } from 'react'
 import { autenticacaoServico } from '../servicos/autenticacaoServico'
-import { AuthRequest, AuthResponse } from '../tipos'
+import type { AuthRequest, AuthResponse } from '../tipos'
 
 interface AutenticacaoContextoType {
   autenticado: boolean

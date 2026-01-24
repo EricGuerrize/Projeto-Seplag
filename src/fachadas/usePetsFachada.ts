@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { petServico } from '../servicos/petServico'
-import { Pet, PetRequest, PetResponse, PagedPetResponse } from '../tipos'
+import type { Pet, PetRequest, PetResponse, PagedPetResponse } from '../tipos'
 
 export const usePetsFachada = () => {
   const [pets, setPets] = useState<PetResponse[]>([])

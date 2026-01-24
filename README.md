@@ -25,8 +25,12 @@ src/
 │   ├── Botao/
 │   ├── Entrada/
 │   ├── Cartao/
-│   └── Carregando/
+│   ├── Carregando/
+│   └── RotaProtegida/
 ├── paginas/              # Páginas da aplicação
+│   ├── Login/
+│   ├── Inicio/
+│   └── DetalhesPet/
 ├── servicos/             # Camada de serviços (chamadas à API)
 │   ├── api.ts            # Configuração do Axios
 │   ├── autenticacaoServico.ts
@@ -89,6 +93,13 @@ src/
 - [x] Controle de paginação integrado
 - [x] Tratamento de erros e estado de carregamento
 
+### Páginas
+- [x] Login - autenticação do usuário
+- [x] Rota protegida - redirecionamento automático para login
+- [x] Configuração de rotas com React Router
+- [x] Início (Listagem de Pets) - exibição em cards com paginação e busca
+- [x] Detalhes do Pet - informações completas e dados do tutor
+
 ## Como Executar
 
 ### Pré-requisitos
@@ -149,9 +160,7 @@ A aplicação consome a API pública disponível em:
 
 ## Próximos Passos
 
-- [ ] Página de Login
-- [ ] Página de listagem de Pets
-- [ ] Página de detalhes do Pet
+- [ ] Formulário de cadastro/edição de Pet
 - [ ] Página de cadastro/edição de Pet
 - [ ] Página de cadastro/edição de Tutor
 - [ ] Configuração de rotas com lazy loading

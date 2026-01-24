@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { tutorServico } from '../servicos/tutorServico'
-import { TutorRequest, TutorResponse, TutorResponseComPets, PagedTutorResponse } from '../tipos'
+import type { TutorRequest, TutorResponse, TutorResponseComPets, PagedTutorResponse } from '../tipos'
 
 export const useTutoresFachada = () => {
   const [tutores, setTutores] = useState<TutorResponse[]>([])
