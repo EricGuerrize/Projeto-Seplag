@@ -50,6 +50,10 @@ export const Inicio = () => {
     navigate('/login')
   }
 
+  const handleVerTutores = () => {
+    navigate('/tutores')
+  }
+
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Cabeçalho */}
@@ -58,9 +62,14 @@ export const Inicio = () => {
           <h1 className="text-xl font-bold text-gray-800">
             Gerenciador de Pets
           </h1>
-          <Botao variante="secundario" onClick={handleLogout}>
-            Sair
-          </Botao>
+          <div className="flex gap-2">
+            <Botao variante="secundario" onClick={handleVerTutores}>
+              Tutores
+            </Botao>
+            <Botao variante="secundario" onClick={handleLogout}>
+              Sair
+            </Botao>
+          </div>
         </div>
       </header>
 

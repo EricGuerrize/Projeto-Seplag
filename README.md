@@ -31,7 +31,10 @@ src/
 │   ├── Login/
 │   ├── Inicio/
 │   ├── DetalhesPet/
-│   └── FormularioPet/
+│   ├── FormularioPet/
+│   ├── Tutores/
+│   ├── DetalhesTutor/
+│   └── FormularioTutor/
 ├── servicos/             # Camada de serviços (chamadas à API)
 │   ├── api.ts            # Configuração do Axios
 │   ├── autenticacaoServico.ts
@@ -101,6 +104,9 @@ src/
 - [x] Início (Listagem de Pets) - exibição em cards com paginação e busca
 - [x] Detalhes do Pet - informações completas e dados do tutor
 - [x] Formulário de Pet - cadastro e edição com upload de foto
+- [x] Listagem de Tutores - exibição em cards com paginação e busca
+- [x] Detalhes do Tutor - informações e pets vinculados
+- [x] Formulário de Tutor - cadastro e edição com máscara de telefone
 
 ## Como Executar
 
@@ -142,6 +148,8 @@ A aplicação consome a API pública disponível em:
 - `POST /autenticacao/login` - Realizar login
 - `PUT /autenticacao/refresh` - Renovar token de acesso
 
+> Para testar a aplicação, utilize as credenciais disponíveis na API de teste fornecida pela organização do processo seletivo.
+
 #### Pets
 - `GET /v1/pets` - Listar pets (com paginação e busca)
 - `GET /v1/pets/{id}` - Buscar pet por ID
@@ -162,7 +170,6 @@ A aplicação consome a API pública disponível em:
 
 ## Próximos Passos
 
-- [ ] Formulário de cadastro/edição de Tutor
 - [ ] Configuração de rotas com lazy loading
 - [ ] Testes unitários
 - [ ] Docker e configuração de deploy

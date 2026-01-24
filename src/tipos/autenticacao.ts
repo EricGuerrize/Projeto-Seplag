@@ -1,20 +1,22 @@
 export interface AuthRequest {
-  usuario: string
-  senha: string
+  username: string
+  password: string
 }
 
 export interface AuthResponse {
-  token: string
-  tipo: string
-  expiracao: number
+  access_token: string
+  refresh_token: string
+  expires_in: number
+  refresh_expires_in: number
 }
 
 export interface TokenRefreshRequest {
-  token: string
+  refresh_token: string
 }
 
 export interface TokenRefreshResponse {
-  token: string
-  tipo: string
-  expiracao: number
+  access_token: string
+  refresh_token: string
+  expires_in: number
+  refresh_expires_in: number
 }

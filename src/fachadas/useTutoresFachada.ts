@@ -14,7 +14,7 @@ export const useTutoresFachada = () => {
     tamanhoPagina: 10,
   })
 
-  const buscarTutores = useCallback(async (pagina: number = 0) => {
+  const buscarTutores = useCallback(async (pagina: number = 0, _busca?: string) => {
     setCarregando(true)
     setErro(null)
 

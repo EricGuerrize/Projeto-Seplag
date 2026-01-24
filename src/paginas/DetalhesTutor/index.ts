@@ -1,0 +1,1 @@
+export { DetalhesTutor } from './DetalhesTutor'

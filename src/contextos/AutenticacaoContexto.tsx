@@ -40,7 +40,8 @@ export const AutenticacaoProvider = ({ children }: AutenticacaoProviderProps) =>
   const login = async (credenciais: AuthRequest) => {
     try {
       const resposta: AuthResponse = await autenticacaoServico.login(credenciais)
-      autenticacaoServico.salvarToken(resposta.token)
+      autenticacaoServico.salvarToken(resposta.access_token)
+      localStorage.setItem('refreshToken', resposta.refresh_token)
       setAutenticado(true)
     } catch (erro) {
       throw erro
