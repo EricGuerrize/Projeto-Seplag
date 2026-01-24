@@ -30,7 +30,8 @@ src/
 ├── paginas/              # Páginas da aplicação
 │   ├── Login/
 │   ├── Inicio/
-│   └── DetalhesPet/
+│   ├── DetalhesPet/
+│   └── FormularioPet/
 ├── servicos/             # Camada de serviços (chamadas à API)
 │   ├── api.ts            # Configuração do Axios
 │   ├── autenticacaoServico.ts
@@ -99,6 +100,7 @@ src/
 - [x] Configuração de rotas com React Router
 - [x] Início (Listagem de Pets) - exibição em cards com paginação e busca
 - [x] Detalhes do Pet - informações completas e dados do tutor
+- [x] Formulário de Pet - cadastro e edição com upload de foto
 
 ## Como Executar
 
@@ -160,9 +162,7 @@ A aplicação consome a API pública disponível em:
 
 ## Próximos Passos
 
-- [ ] Formulário de cadastro/edição de Pet
-- [ ] Página de cadastro/edição de Pet
-- [ ] Página de cadastro/edição de Tutor
+- [ ] Formulário de cadastro/edição de Tutor
 - [ ] Configuração de rotas com lazy loading
 - [ ] Testes unitários
 - [ ] Docker e configuração de deploy

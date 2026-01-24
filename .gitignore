@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Configuracoes de agentes/ferramentas
+.agent/
+.agents/
+.claude/
+.codex/
+.cursor/
+.gemini/
