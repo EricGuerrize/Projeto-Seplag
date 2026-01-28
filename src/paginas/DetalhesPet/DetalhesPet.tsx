@@ -139,7 +139,7 @@ export const DetalhesPet = () => {
               </div>
 
               {/* Informações do tutor */}
-              {petSelecionado.tutor && (
+              {petSelecionado.tutor ? (
                 <div className="mt-6 p-4 bg-gray-50 rounded-lg">
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">
                     Tutor
@@ -154,6 +154,12 @@ export const DetalhesPet = () => {
                   >
                     Ver Tutor
                   </Botao>
+                </div>
+              ) : (
+                <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <p className="text-yellow-700 text-sm">
+                    Este pet ainda não possui um tutor vinculado.
+                  </p>
                 </div>
               )}
 

@@ -136,6 +136,39 @@ npm run build
 npm test
 ```
 
+## Deploy com Docker
+
+A aplicação está preparada para ser executada em container Docker.
+
+### Construir a imagem
+```bash
+docker build -t seplag-frontend .
+```
+
+### Executar o container
+```bash
+docker run -p 8080:80 seplag-frontend
+```
+
+A aplicação estará disponível em `http://localhost:8080`
+
+### Usando docker-compose
+```bash
+docker-compose up -d
+```
+
+Para parar o container:
+```bash
+docker-compose down
+```
+
+### Arquivos de configuração Docker
+
+- `Dockerfile` - Build multi-stage (Node.js para compilação + Nginx para produção)
+- `nginx.conf` - Configuração do Nginx para servir a SPA
+- `docker-compose.yml` - Orquestração do container
+- `.dockerignore` - Arquivos ignorados no contexto de build
+
 ## API
 
 A aplicação consome a API pública disponível em:
@@ -172,7 +205,6 @@ A aplicação consome a API pública disponível em:
 
 - [ ] Configuração de rotas com lazy loading
 - [ ] Testes unitários
-- [ ] Docker e configuração de deploy
 
 ## Autor
 

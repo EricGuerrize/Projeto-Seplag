@@ -1,21 +1,25 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AutenticacaoProvider } from './contextos/AutenticacaoContexto'
-import { RotaProtegida } from './componentes'
-import { Login } from './paginas/Login'
-import { Inicio } from './paginas/Inicio'
-import { DetalhesPet } from './paginas/DetalhesPet'
-import { FormularioPet } from './paginas/FormularioPet'
-import { Tutores } from './paginas/Tutores'
-import { DetalhesTutor } from './paginas/DetalhesTutor'
-import { FormularioTutor } from './paginas/FormularioTutor'
+import { RotaProtegida, Carregando } from './componentes'
+
+// Lazy Loading das páginas para melhor performance
+const Login = lazy(() => import('./paginas/Login').then(m => ({ default: m.Login })))
+const Inicio = lazy(() => import('./paginas/Inicio').then(m => ({ default: m.Inicio })))
+const DetalhesPet = lazy(() => import('./paginas/DetalhesPet').then(m => ({ default: m.DetalhesPet })))
+const FormularioPet = lazy(() => import('./paginas/FormularioPet').then(m => ({ default: m.FormularioPet })))
+const Tutores = lazy(() => import('./paginas/Tutores').then(m => ({ default: m.Tutores })))
+const DetalhesTutor = lazy(() => import('./paginas/DetalhesTutor').then(m => ({ default: m.DetalhesTutor })))
+const FormularioTutor = lazy(() => import('./paginas/FormularioTutor').then(m => ({ default: m.FormularioTutor })))
 
 function App() {
   return (
     <BrowserRouter>
       <AutenticacaoProvider>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Carregando /></div>}>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route
             path="/"
             element={
               <RotaProtegida>
@@ -81,7 +85,8 @@ function App() {
               </RotaProtegida>
             }
           />
-        </Routes>
+          </Routes>
+        </Suspense>
       </AutenticacaoProvider>
     </BrowserRouter>
   )
