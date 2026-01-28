@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import type { FormEvent, ChangeEvent } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTutoresFachada } from '../../fachadas'
-import { Cartao, Carregando, Entrada, Botao } from '../../componentes'
+import { Cartao, Carregando, Entrada, Botao, Rodape } from '../../componentes'
 import type { TutorRequest } from '../../tipos'
 
 export const FormularioTutor = () => {
@@ -140,7 +140,7 @@ export const FormularioTutor = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 flex flex-col">
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-xl font-bold text-gray-800">
@@ -152,7 +152,7 @@ export const FormularioTutor = () => {
         </div>
       </header>
 
-      <main className="max-w-2xl mx-auto px-4 py-8">
+      <main className="max-w-2xl mx-auto px-4 py-8 flex-1">
         <Cartao className="p-6">
           {erro && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -178,12 +178,24 @@ export const FormularioTutor = () => {
                     <span className="text-gray-400 text-4xl">👤</span>
                   )}
                 </div>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFotoChange}
-                  className="text-sm text-gray-600"
-                />
+                <div className="flex flex-col gap-1">
+                  <input
+                    id="foto-tutor"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFotoChange}
+                    className="sr-only"
+                  />
+                  <label
+                    htmlFor="foto-tutor"
+                    className="cursor-pointer px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-medium text-gray-700 inline-block w-fit"
+                  >
+                    Selecionar foto
+                  </label>
+                  <span className="text-sm text-gray-500">
+                    {arquivoFoto ? arquivoFoto.name : 'Nenhum arquivo selecionado'}
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -228,6 +240,8 @@ export const FormularioTutor = () => {
           </form>
         </Cartao>
       </main>
+
+      <Rodape />
     </div>
   )
 }

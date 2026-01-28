@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { usePetsFachada } from '../../fachadas'
-import { Cartao, Carregando, Botao } from '../../componentes'
+import { Cartao, Carregando, Botao, Rodape } from '../../componentes'
 
 export const DetalhesPet = () => {
   const { id } = useParams<{ id: string }>()
@@ -82,7 +82,7 @@ export const DetalhesPet = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 flex flex-col">
       {/* Cabeçalho */}
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
@@ -95,7 +95,7 @@ export const DetalhesPet = () => {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      <main className="max-w-4xl mx-auto px-4 py-8 flex-1">
         <Cartao className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Foto do pet */}
@@ -176,6 +176,8 @@ export const DetalhesPet = () => {
           </div>
         </Cartao>
       </main>
+
+      <Rodape />
     </div>
   )
 }

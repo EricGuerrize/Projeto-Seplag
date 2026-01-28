@@ -1,11 +1,16 @@
-import { useEffect } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTutoresFachada } from '../../fachadas'
-import { Cartao, Carregando, Botao } from '../../componentes'
+import { petServico } from '../../servicos/petServico'
+import { Cartao, Carregando, Botao, Rodape } from '../../componentes'
+import type { PetResponse } from '../../tipos'
 
 export const DetalhesTutor = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const [modalVincularAberto, setModalVincularAberto] = useState(false)
+  const [petsDisponiveis, setPetsDisponiveis] = useState<PetResponse[]>([])
+  const [carregandoPets, setCarregandoPets] = useState(false)
 
   const {
     tutorSelecionado,
@@ -13,6 +18,7 @@ export const DetalhesTutor = () => {
     erro,
     buscarTutorPorId,
     excluirTutor,
+    vincularPet,
     desvincularPet,
     limparTutorSelecionado,
   } = useTutoresFachada()
@@ -55,6 +61,36 @@ export const DetalhesTutor = () => {
     navigate(`/pets/${petId}`)
   }
 
+  const abrirModalVincular = useCallback(async () => {
+    setModalVincularAberto(true)
+    setCarregandoPets(true)
+    setPetsDisponiveis([])
+    try {
+      const resposta = await petServico.listar(0, 100)
+      const idsVinculados = new Set((tutorSelecionado?.pets ?? []).map((p) => p.id))
+      const disponiveis = resposta.content.filter((p) => !idsVinculados.has(p.id))
+      setPetsDisponiveis(disponiveis)
+    } catch {
+      setPetsDisponiveis([])
+    } finally {
+      setCarregandoPets(false)
+    }
+  }, [tutorSelecionado?.pets])
+
+  const fecharModalVincular = () => {
+    setModalVincularAberto(false)
+    setPetsDisponiveis([])
+  }
+
+  const handleVincularPet = async (petId: number) => {
+    if (!id) return
+    const sucesso = await vincularPet(Number(id), petId)
+    if (sucesso) {
+      buscarTutorPorId(Number(id))
+      fecharModalVincular()
+    }
+  }
+
   if (carregando) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -86,7 +122,7 @@ export const DetalhesTutor = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 flex flex-col">
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-xl font-bold text-gray-800">
@@ -98,7 +134,7 @@ export const DetalhesTutor = () => {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      <main className="max-w-4xl mx-auto px-4 py-8 flex-1">
         <Cartao className="p-6">
           <div className="flex flex-col md:flex-row gap-6">
             {/* Foto do tutor */}
@@ -157,6 +193,9 @@ export const DetalhesTutor = () => {
             <h3 className="text-xl font-bold text-gray-800">
               Pets Vinculados
             </h3>
+            <Botao tamanho="pequeno" onClick={abrirModalVincular}>
+              Vincular Pet
+            </Botao>
           </div>
 
           {tutorSelecionado.pets && tutorSelecionado.pets.length > 0 ? (
@@ -193,7 +232,84 @@ export const DetalhesTutor = () => {
             </Cartao>
           )}
         </div>
+
+        {/* Modal Vincular Pet */}
+        {modalVincularAberto && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+            onClick={fecharModalVincular}
+          >
+            <div
+              className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[80vh] flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-4 border-b flex justify-between items-center">
+                <h3 className="text-lg font-semibold text-gray-800">
+                  Vincular pet ao tutor
+                </h3>
+                <button
+                  type="button"
+                  onClick={fecharModalVincular}
+                  className="text-gray-500 hover:text-gray-700 text-2xl leading-none"
+                >
+                  &times;
+                </button>
+              </div>
+              <div className="p-4 overflow-y-auto flex-1">
+                {carregandoPets ? (
+                  <div className="flex justify-center py-8">
+                    <Carregando />
+                  </div>
+                ) : petsDisponiveis.length === 0 ? (
+                  <p className="text-gray-500 text-center py-4">
+                    Nenhum pet disponível para vincular (todos já estão vinculados ou não há pets cadastrados).
+                  </p>
+                ) : (
+                  <ul className="space-y-2">
+                    {petsDisponiveis.map((pet) => (
+                      <li
+                        key={pet.id}
+                        className="flex items-center justify-between gap-3 p-3 bg-gray-50 rounded-lg"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="h-10 w-10 bg-gray-200 rounded-lg flex items-center justify-center flex-shrink-0">
+                            {pet.fotos && pet.fotos.length > 0 ? (
+                              <img
+                                src={pet.fotos[0].url}
+                                alt={pet.nome}
+                                className="w-full h-full object-cover rounded-lg"
+                              />
+                            ) : (
+                              <span className="text-xl">🐾</span>
+                            )}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="font-medium text-gray-800 truncate">
+                              {pet.nome}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              {pet.especie} • {pet.idade} {pet.idade === 1 ? 'ano' : 'anos'}
+                            </p>
+                          </div>
+                        </div>
+                        <Botao
+                          tamanho="pequeno"
+                          onClick={() => handleVincularPet(pet.id)}
+                          disabled={carregando}
+                        >
+                          Vincular
+                        </Botao>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </main>
+
+      <Rodape />
     </div>
   )
 }

@@ -330,10 +330,10 @@ export const Login = () => {
                 className="text-sm"
                 style={{ fontFamily: "'Source Sans 3', sans-serif", color: 'var(--cor-texto-suave)' }}
               >
-                Desenvolvido pela SEPLAG
+                Projeto desenvolvido para SEPLAG
               </p>
               <p className="text-xs mt-1 text-gray-400">
-                Governo do Estado de Mato Grosso © 2025
+                Processo Seletivo - Eric Guerrize
               </p>
             </div>
           </div>

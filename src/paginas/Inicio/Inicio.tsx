@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { usePetsFachada } from '../../fachadas'
-import { Cartao, Carregando, Entrada, Botao } from '../../componentes'
+import { Cartao, Carregando, Entrada, Botao, Rodape } from '../../componentes'
 import { useAuth } from '../../hooks/useAuth'
 
 export const Inicio = () => {
@@ -55,7 +55,7 @@ export const Inicio = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 flex flex-col">
       {/* Cabeçalho */}
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
@@ -73,7 +73,7 @@ export const Inicio = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto px-4 py-8 flex-1">
         {/* Barra de busca e ações */}
         <div className="flex flex-col md:flex-row gap-4 mb-8">
           <div className="flex-1 flex gap-2">
@@ -168,6 +168,8 @@ export const Inicio = () => {
           </>
         )}
       </main>
+
+      <Rodape />
     </div>
   )
 }

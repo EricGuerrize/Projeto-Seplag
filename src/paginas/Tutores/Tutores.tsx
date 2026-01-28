@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTutoresFachada } from '../../fachadas'
-import { Cartao, Carregando, Entrada, Botao } from '../../componentes'
+import { Cartao, Carregando, Entrada, Botao, Rodape } from '../../componentes'
 
 export const Tutores = () => {
   const [busca, setBusca] = useState('')
@@ -50,7 +50,7 @@ export const Tutores = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 flex flex-col">
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-xl font-bold text-gray-800">
@@ -67,7 +67,7 @@ export const Tutores = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto px-4 py-8 flex-1">
         {/* Barra de busca */}
         <div className="mb-6 flex gap-2">
           <div className="flex-1">
@@ -162,6 +162,8 @@ export const Tutores = () => {
           </>
         )}
       </main>
+
+      <Rodape />
     </div>
   )
 }
