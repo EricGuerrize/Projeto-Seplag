@@ -37,7 +37,7 @@ export const DetalhesTutor = () => {
     if (tutorSelecionado?.fotos) {
       // #region agent log
       const first = tutorSelecionado.fotos[0]
-      fetch('http://127.0.0.1:7246/ingest/347cdc5a-4f6a-40c0-a44d-3cf8abd2d533',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'DetalhesTutor.tsx:tutorSelecionado.fotos',message:'Displaying photo',data:{tutorId:tutorSelecionado.id,fotosCount:tutorSelecionado.fotos.length,firstUrl:first?.url,firstId:first?.id},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H5'})}).catch(()=>{});
+      fetch('http://127.0.0.1:7246/ingest/347cdc5a-4f6a-40c0-a44d-3cf8abd2d533', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'DetalhesTutor.tsx:tutorSelecionado.fotos', message: 'Displaying photo', data: { tutorId: tutorSelecionado.id, fotosCount: tutorSelecionado.fotos.length, firstUrl: first?.url, firstId: first?.id }, timestamp: Date.now(), sessionId: 'debug-session', hypothesisId: 'H5' }) }).catch(() => { });
       // #endregion
     }
   }, [tutorSelecionado])
@@ -151,7 +151,11 @@ export const DetalhesTutor = () => {
               <div className="h-48 w-48 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden mx-auto">
                 {tutorSelecionado.fotos && tutorSelecionado.fotos.length > 0 ? (
                   <img
-                    src={tutorSelecionado.fotos[0].url}
+                    src={(() => {
+                      const foto = tutorSelecionado.fotos![tutorSelecionado.fotos!.length - 1]
+                      const sep = foto.url.includes('?') ? '&' : '?'
+                      return `${foto.url}${sep}t=${foto.id}`
+                    })()}
                     alt={tutorSelecionado.nome}
                     className="w-full h-full object-cover"
                   />
@@ -284,7 +288,10 @@ export const DetalhesTutor = () => {
                           <div className="h-10 w-10 bg-gray-200 rounded-lg flex items-center justify-center flex-shrink-0">
                             {pet.fotos && pet.fotos.length > 0 ? (
                               <img
-                                src={pet.fotos[0].url}
+                                src={(() => {
+                                  const foto = pet.fotos![pet.fotos!.length - 1]
+                                  return foto.url
+                                })()}
                                 alt={pet.nome}
                                 className="w-full h-full object-cover rounded-lg"
                               />
