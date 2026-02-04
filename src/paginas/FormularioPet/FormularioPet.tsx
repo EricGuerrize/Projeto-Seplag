@@ -113,7 +113,11 @@ export const FormularioPet = () => {
 
     if (petCriado) {
       if (arquivoFoto) {
-        await adicionarFoto(petCriado.id, arquivoFoto)
+        const resultadoUpload = await adicionarFoto(petCriado.id, arquivoFoto)
+        if (!resultadoUpload) {
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+          return
+        }
       }
       navigate(`/pets/${petCriado.id}`)
     }
