@@ -112,7 +112,11 @@ export const Tutores = () => {
                       <div className="h-16 w-16 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
                         {tutor.fotos && tutor.fotos.length > 0 ? (
                           <img
-                            src={tutor.fotos[0].url}
+                            src={(() => {
+                              const foto = tutor.fotos![tutor.fotos!.length - 1]
+                              const sep = foto.url.includes('?') ? '&' : '?'
+                              return `${foto.url}${sep}t=${foto.id}`
+                            })()}
                             alt={tutor.nome}
                             className="w-full h-full object-cover"
                           />

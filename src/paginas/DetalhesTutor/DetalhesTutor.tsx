@@ -33,6 +33,15 @@ export const DetalhesTutor = () => {
     }
   }, [id])
 
+  useEffect(() => {
+    if (tutorSelecionado?.fotos) {
+      // #region agent log
+      const first = tutorSelecionado.fotos[0]
+      fetch('http://127.0.0.1:7246/ingest/347cdc5a-4f6a-40c0-a44d-3cf8abd2d533',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'DetalhesTutor.tsx:tutorSelecionado.fotos',message:'Displaying photo',data:{tutorId:tutorSelecionado.id,fotosCount:tutorSelecionado.fotos.length,firstUrl:first?.url,firstId:first?.id},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H5'})}).catch(()=>{});
+      // #endregion
+    }
+  }, [tutorSelecionado])
+
   const handleVoltar = () => {
     navigate('/tutores')
   }

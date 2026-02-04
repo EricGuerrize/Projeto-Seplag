@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { usePetsFachada } from '../../fachadas'
 import { Cartao, Carregando, Botao, Rodape } from '../../componentes'
@@ -6,6 +6,7 @@ import { Cartao, Carregando, Botao, Rodape } from '../../componentes'
 export const DetalhesPet = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const [imgCacheBuster, setImgCacheBuster] = useState(0)
 
   const {
     petSelecionado,
@@ -25,6 +26,21 @@ export const DetalhesPet = () => {
       limparPetSelecionado()
     }
   }, [id])
+
+  useEffect(() => {
+    if (petSelecionado) {
+      setImgCacheBuster(Date.now())
+    }
+  }, [petSelecionado])
+
+  useEffect(() => {
+    if (petSelecionado?.fotos) {
+      // #region agent log
+      const first = petSelecionado.fotos[0]
+      fetch('http://127.0.0.1:7246/ingest/347cdc5a-4f6a-40c0-a44d-3cf8abd2d533',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'DetalhesPet.tsx:petSelecionado.fotos',message:'Displaying photo',data:{petId:petSelecionado.id,fotosCount:petSelecionado.fotos.length,firstUrl:first?.url,firstId:first?.id},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H5'})}).catch(()=>{});
+      // #endregion
+    }
+  }, [petSelecionado])
 
   const handleVoltar = () => {
     navigate('/')
@@ -102,7 +118,11 @@ export const DetalhesPet = () => {
             <div className="h-64 md:h-80 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
               {petSelecionado.fotos && petSelecionado.fotos.length > 0 ? (
                 <img
-                  src={petSelecionado.fotos[0].url}
+                  src={(() => {
+                    const foto = petSelecionado.fotos[petSelecionado.fotos.length - 1]
+                    const sep = foto.url.includes('?') ? '&' : '?'
+                    return `${foto.url}${sep}t=${imgCacheBuster}`
+                  })()}
                   alt={petSelecionado.nome}
                   className="w-full h-full object-cover"
                 />

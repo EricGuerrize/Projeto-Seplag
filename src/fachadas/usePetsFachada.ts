@@ -100,11 +100,19 @@ export const usePetsFachada = () => {
   const adicionarFoto = useCallback(async (petId: number, arquivo: File) => {
     setCarregando(true)
     setErro(null)
-
+    // #region agent log
+    fetch('http://127.0.0.1:7246/ingest/347cdc5a-4f6a-40c0-a44d-3cf8abd2d533',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'usePetsFachada.ts:adicionarFoto:entry',message:'adicionarFoto called',data:{petId,fileName:arquivo?.name},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H3'})}).catch(()=>{});
+    // #endregion
     try {
       const foto = await petServico.adicionarFoto(petId, arquivo)
+      // #region agent log
+      fetch('http://127.0.0.1:7246/ingest/347cdc5a-4f6a-40c0-a44d-3cf8abd2d533',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'usePetsFachada.ts:adicionarFoto:success',message:'Upload success',data:{fotoId:foto?.id,url:foto?.url,returnedNull:!foto},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H3'})}).catch(()=>{});
+      // #endregion
       return foto
     } catch (error) {
+      // #region agent log
+      fetch('http://127.0.0.1:7246/ingest/347cdc5a-4f6a-40c0-a44d-3cf8abd2d533',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'usePetsFachada.ts:adicionarFoto:catch',message:'Upload failed',data:{err:String(error)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H3'})}).catch(()=>{});
+      // #endregion
       setErro('Erro ao adicionar foto.')
       return null
     } finally {

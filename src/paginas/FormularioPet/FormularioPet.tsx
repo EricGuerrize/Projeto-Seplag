@@ -112,11 +112,14 @@ export const FormularioPet = () => {
     }
 
     if (petCriado) {
-      // Upload da foto se houver
+      let uploadOk = true
       if (arquivoFoto) {
-        await adicionarFoto(petCriado.id, arquivoFoto)
+        uploadOk = (await adicionarFoto(petCriado.id, arquivoFoto)) != null
+        // #region agent log
+        fetch('http://127.0.0.1:7246/ingest/347cdc5a-4f6a-40c0-a44d-3cf8abd2d533',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'FormularioPet.tsx:handleSubmit:after adicionarFoto',message:'Upload result before navigate',data:{hasArquivoFoto:!!arquivoFoto,uploadOk},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H3'})}).catch(()=>{});
+        // #endregion
+        if (!uploadOk) return
       }
-
       navigate(`/pets/${petCriado.id}`)
     }
   }
@@ -125,7 +128,7 @@ export const FormularioPet = () => {
     navigate(-1)
   }
 
-  if (carregando && modoEdicao) {
+  if (carregando && modoEdicao && !petSelecionado) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <Carregando />

@@ -122,7 +122,11 @@ export const Inicio = () => {
                   <div className="h-48 bg-gray-200 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
                     {pet.fotos && pet.fotos.length > 0 ? (
                       <img
-                        src={pet.fotos[0].url}
+                        src={(() => {
+                          const foto = pet.fotos[pet.fotos.length - 1]
+                          const sep = foto.url.includes('?') ? '&' : '?'
+                          return `${foto.url}${sep}t=${foto.id}`
+                        })()}
                         alt={pet.nome}
                         className="w-full h-full object-cover"
                       />

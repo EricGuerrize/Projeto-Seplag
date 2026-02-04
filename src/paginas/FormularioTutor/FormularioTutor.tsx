@@ -119,10 +119,13 @@ export const FormularioTutor = () => {
     }
 
     if (tutorCriado) {
+      let uploadOk: unknown = true
       if (arquivoFoto) {
-        await adicionarFoto(tutorCriado.id, arquivoFoto)
+        uploadOk = await adicionarFoto(tutorCriado.id, arquivoFoto)
+        // #region agent log
+        fetch('http://127.0.0.1:7246/ingest/347cdc5a-4f6a-40c0-a44d-3cf8abd2d533',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'FormularioTutor.tsx:handleSubmit:after adicionarFoto',message:'Upload result before navigate',data:{hasArquivoFoto:!!arquivoFoto,uploadOk:!!uploadOk},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H3'})}).catch(()=>{});
+        // #endregion
       }
-
       navigate(`/tutores/${tutorCriado.id}`)
     }
   }
