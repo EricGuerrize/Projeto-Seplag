@@ -11,6 +11,7 @@ const FormularioPet = lazy(() => import('./paginas/FormularioPet').then(m => ({ 
 const Tutores = lazy(() => import('./paginas/Tutores').then(m => ({ default: m.Tutores })))
 const DetalhesTutor = lazy(() => import('./paginas/DetalhesTutor').then(m => ({ default: m.DetalhesTutor })))
 const FormularioTutor = lazy(() => import('./paginas/FormularioTutor').then(m => ({ default: m.FormularioTutor })))
+const Status = lazy(() => import('./paginas/Status').then(m => ({ default: m.Status })))
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Carregando /></div>}>
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/status" element={<Status />} />
             <Route
             path="/"
             element={
