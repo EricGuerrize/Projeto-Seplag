@@ -21,6 +21,11 @@ export const DetalhesPet = () => {
 
   const fotoUrl = (() => {
     try {
+      // Verificar foto singular primeiro (como a API retorna)
+      if (petSelecionado?.foto?.url) {
+        return petSelecionado.foto.url
+      }
+      // Fallback para fotos plural
       const fotos = petSelecionado?.fotos || []
       if (fotos.length === 0) return ''
       const fotosOrdenadas = [...fotos].sort((a, b) => (b.id || 0) - (a.id || 0))

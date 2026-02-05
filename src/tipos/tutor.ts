@@ -13,6 +13,7 @@ export interface Tutor {
   nome: string
   telefone: string
   endereco: string
+  foto?: Anexo
   fotos?: Anexo[]
   pets?: PetBasico[]
 }
@@ -28,6 +29,7 @@ export interface TutorResponse {
   nome: string
   telefone: string
   endereco: string
+  foto?: Anexo
   fotos?: Anexo[]
 }
 
@@ -36,6 +38,7 @@ export interface TutorResponseComPets {
   nome: string
   telefone: string
   endereco: string
+  foto?: Anexo
   fotos?: Anexo[]
   pets?: PetBasico[]
 }

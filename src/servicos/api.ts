@@ -16,12 +16,6 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
-    // #region agent log
-    if (config.data instanceof FormData) {
-      const ct = config.headers['Content-Type']
-      fetch('http://127.0.0.1:7246/ingest/347cdc5a-4f6a-40c0-a44d-3cf8abd2d533', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'api.ts:request:FormData', message: 'FormData request', data: { url: config.url, contentType: ct }, timestamp: Date.now(), sessionId: 'debug-session', hypothesisId: 'H1', runId: 'post-fix' }) }).catch(() => { });
-    }
-    // #endregion
     // Backend @Consumes multipart: remove Content-Type para axios definir multipart/form-data com boundary
     if (config.data instanceof FormData) {
       if (config.headers && typeof (config.headers as any).delete === 'function') {

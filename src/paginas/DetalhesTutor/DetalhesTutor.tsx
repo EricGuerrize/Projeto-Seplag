@@ -27,6 +27,11 @@ export const DetalhesTutor = () => {
 
   const fotoUrl = (() => {
     try {
+      // Verificar foto singular primeiro (como a API retorna)
+      if (tutorSelecionado?.foto?.url) {
+        return tutorSelecionado.foto.url
+      }
+      // Fallback para fotos plural
       if (!tutorSelecionado?.fotos || tutorSelecionado.fotos.length === 0) return ''
       const fotosOrdenadas = [...tutorSelecionado.fotos].sort((a, b) => b.id - a.id)
       const foto = fotosOrdenadas[0]

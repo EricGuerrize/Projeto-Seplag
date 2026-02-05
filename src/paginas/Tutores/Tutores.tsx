@@ -115,6 +115,9 @@ export const Tutores = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {tutores.map((tutor) => {
                 const fotoUrl = (() => {
+                  // Verificar foto singular primeiro (como a API retorna)
+                  if (tutor.foto?.url) return tutor.foto.url
+                  // Fallback para fotos plural
                   if (!tutor.fotos || tutor.fotos.length === 0) return ''
                   const fotosOrdenadas = [...tutor.fotos].sort((a, b) => b.id - a.id)
                   const foto = fotosOrdenadas[0]

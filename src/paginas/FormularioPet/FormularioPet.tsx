@@ -51,7 +51,10 @@ export const FormularioPet = () => {
         raca: petSelecionado.raca || '',
       })
 
-      if (petSelecionado.fotos && petSelecionado.fotos.length > 0) {
+      // Verificar foto singular primeiro (como a API retorna)
+      if (petSelecionado.foto?.url) {
+        setPreviewFoto(petSelecionado.foto.url)
+      } else if (petSelecionado.fotos && petSelecionado.fotos.length > 0) {
         setPreviewFoto(petSelecionado.fotos[0].url)
       }
     }
@@ -116,34 +119,11 @@ export const FormularioPet = () => {
       if (arquivoFoto) {
         setUploadandoFoto(true)
         try {
-          const resultadoUpload = await adicionarFoto(petCriado.id, arquivoFoto)
-          if (!resultadoUpload || !resultadoUpload.id) {
-            console.error('Falha no upload: Resposta inválida', resultadoUpload)
-            window.scrollTo({ top: 0, behavior: 'smooth' })
-            alert('Erro ao salvar foto: O servidor não retornou a confirmação do upload.')
-            return
-          }
+          await adicionarFoto(petCriado.id, arquivoFoto)
         } catch (error) {
           console.error('Erro ao fazer upload da foto:', error)
-          return
         } finally {
           setUploadandoFoto(false)
-        }
-        const aguardarFotoPersistir = async (): Promise<boolean> => {
-          const delays = [500, 1000, 1000, 2000, 2000]
-          for (const delay of delays) {
-            await new Promise((resolve) => setTimeout(resolve, delay))
-            const atualizado = await buscarPetPorId(petCriado.id)
-            if (atualizado?.fotos && atualizado.fotos.length > 0) {
-              return true
-            }
-          }
-          return false
-        }
-        const persistiu = await aguardarFotoPersistir()
-        if (!persistiu) {
-          console.warn('Upload retornou 2xx, mas a API não retornou a foto no GET /v1/pets/{id}')
-          alert('Upload feito, mas a API não retornou a foto. Tente recarregar.')
         }
       }
       navigate(`/pets/${petCriado.id}`)

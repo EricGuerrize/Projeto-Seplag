@@ -1,7 +1,9 @@
 export interface Anexo {
   id: number
   url: string
-  nomeArquivo: string
+  nome?: string
+  contentType?: string
+  nomeArquivo?: string
 }
 
 export interface Pet {
@@ -10,6 +12,7 @@ export interface Pet {
   especie: string
   idade: number
   raca?: string
+  foto?: Anexo
   fotos?: Anexo[]
   tutor?: {
     id: number
@@ -32,6 +35,7 @@ export interface PetResponse {
   especie: string
   idade: number
   raca?: string
+  foto?: Anexo
   fotos?: Anexo[]
 }
 
@@ -41,6 +45,7 @@ export interface PetResponseCompleto {
   especie: string
   idade: number
   raca?: string
+  foto?: Anexo
   fotos?: Anexo[]
   tutor?: {
     id: number

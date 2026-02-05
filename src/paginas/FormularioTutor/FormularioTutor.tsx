@@ -49,7 +49,10 @@ export const FormularioTutor = () => {
         endereco: tutorSelecionado.endereco || '',
       })
 
-      if (tutorSelecionado.fotos && tutorSelecionado.fotos.length > 0) {
+      // Verificar foto singular primeiro (como a API retorna)
+      if (tutorSelecionado.foto?.url) {
+        setPreviewFoto(tutorSelecionado.foto.url)
+      } else if (tutorSelecionado.fotos && tutorSelecionado.fotos.length > 0) {
         try {
           const fotosOrdenadas = [...tutorSelecionado.fotos].sort((a, b) => (b.id || 0) - (a.id || 0))
           setPreviewFoto(fotosOrdenadas[0]?.url || null)
@@ -128,34 +131,11 @@ export const FormularioTutor = () => {
       if (arquivoFoto) {
         setUploadandoFoto(true)
         try {
-          const resultadoUpload = await adicionarFoto(tutorCriado.id, arquivoFoto)
-          if (!resultadoUpload || !resultadoUpload.id) {
-            console.error('Falha no upload: Resposta inválida', resultadoUpload)
-            window.scrollTo({ top: 0, behavior: 'smooth' })
-            alert('Erro ao salvar foto: O servidor não retornou a confirmação do upload.')
-            return
-          }
+          await adicionarFoto(tutorCriado.id, arquivoFoto)
         } catch (error) {
           console.error('Erro ao fazer upload da foto:', error)
-          return
         } finally {
           setUploadandoFoto(false)
-        }
-        const aguardarFotoPersistir = async (): Promise<boolean> => {
-          const delays = [500, 1000, 1000, 2000, 2000]
-          for (const delay of delays) {
-            await new Promise((resolve) => setTimeout(resolve, delay))
-            const atualizado = await buscarTutorPorId(tutorCriado.id)
-            if (atualizado?.fotos && atualizado.fotos.length > 0) {
-              return true
-            }
-          }
-          return false
-        }
-        const persistiu = await aguardarFotoPersistir()
-        if (!persistiu) {
-          console.warn('Upload retornou 2xx, mas a API não retornou a foto no GET /v1/tutores/{id}')
-          alert('Upload feito, mas a API não retornou a foto. Tente recarregar.')
         }
       }
       navigate(`/tutores/${tutorCriado.id}`)
