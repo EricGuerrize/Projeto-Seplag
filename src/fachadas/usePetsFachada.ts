@@ -27,33 +27,6 @@ export const usePetsFachada = () => {
         totalElementos: resposta.totalElements,
         tamanhoPagina: resposta.size,
       })
-
-      const semFotos = resposta.content.filter((pet) => !pet.fotos || pet.fotos.length === 0)
-      if (semFotos.length > 0) {
-        const detalhes = await Promise.all(
-          semFotos.map(async (pet) => {
-            try {
-              return await petServico.buscarPorId(pet.id)
-            } catch {
-              return null
-            }
-          })
-        )
-        const fotosPorId = new Map(
-          detalhes
-            .filter((p): p is Pet => Boolean(p))
-            .map((p) => [p.id, p.fotos])
-        )
-        if (fotosPorId.size > 0) {
-          setPets((atual) =>
-            atual.map((pet) =>
-              fotosPorId.has(pet.id)
-                ? { ...pet, fotos: fotosPorId.get(pet.id) }
-                : pet
-            )
-          )
-        }
-      }
     } catch (error) {
       setErro('Erro ao buscar pets. Tente novamente.')
     } finally {
