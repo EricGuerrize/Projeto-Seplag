@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { usePetsFachada } from '../../fachadas'
 import { Cartao, Carregando, Entrada, Botao, Rodape } from '../../componentes'
 import type { PetRequest } from '../../tipos'
+import { obterFotoEstatica } from '../../utils/fotoUtils'
 
 export const FormularioPet = () => {
   const { id } = useParams<{ id: string }>()
@@ -51,11 +52,9 @@ export const FormularioPet = () => {
         raca: petSelecionado.raca || '',
       })
 
-      // Verificar foto singular primeiro (como a API retorna)
-      if (petSelecionado.foto?.url) {
-        setPreviewFoto(petSelecionado.foto.url)
-      } else if (petSelecionado.fotos && petSelecionado.fotos.length > 0) {
-        setPreviewFoto(petSelecionado.fotos[0].url)
+      const fotoEstatica = obterFotoEstatica(petSelecionado)
+      if (fotoEstatica) {
+        setPreviewFoto(fotoEstatica)
       }
     }
   }, [petSelecionado, modoEdicao])

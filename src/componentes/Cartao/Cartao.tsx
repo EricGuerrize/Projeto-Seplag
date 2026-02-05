@@ -7,8 +7,10 @@ interface CartaoProps {
 }
 
 export const Cartao = ({ children, className = '', onClick }: CartaoProps) => {
-  const classesBase = 'bg-white rounded-lg shadow-md p-4 border border-gray-200'
-  const classesInterativo = onClick ? 'cursor-pointer hover:shadow-lg transition-shadow' : ''
+  const classesBase = 'bg-white rounded-xl shadow-md p-4 border border-gray-100 transition-all duration-300'
+  const classesInterativo = onClick
+    ? 'cursor-pointer hover:shadow-xl hover:border-[var(--cor-primaria-clara)] hover:scale-[1.02]'
+    : ''
 
   return (
     <div

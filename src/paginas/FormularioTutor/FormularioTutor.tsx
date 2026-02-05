@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useTutoresFachada } from '../../fachadas'
 import { Cartao, Carregando, Entrada, Botao, Rodape } from '../../componentes'
 import type { TutorRequest } from '../../tipos'
+import { obterFotoEstatica } from '../../utils/fotoUtils'
 
 export const FormularioTutor = () => {
   const { id } = useParams<{ id: string }>()
@@ -49,16 +50,9 @@ export const FormularioTutor = () => {
         endereco: tutorSelecionado.endereco || '',
       })
 
-      // Verificar foto singular primeiro (como a API retorna)
-      if (tutorSelecionado.foto?.url) {
-        setPreviewFoto(tutorSelecionado.foto.url)
-      } else if (tutorSelecionado.fotos && tutorSelecionado.fotos.length > 0) {
-        try {
-          const fotosOrdenadas = [...tutorSelecionado.fotos].sort((a, b) => (b.id || 0) - (a.id || 0))
-          setPreviewFoto(fotosOrdenadas[0]?.url || null)
-        } catch {
-          setPreviewFoto(null)
-        }
+      const fotoEstatica = obterFotoEstatica(tutorSelecionado)
+      if (fotoEstatica) {
+        setPreviewFoto(fotoEstatica)
       }
     }
   }, [tutorSelecionado, modoEdicao])
