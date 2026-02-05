@@ -45,9 +45,9 @@ export const FormularioPet = () => {
   useEffect(() => {
     if (modoEdicao && petSelecionado) {
       setFormulario({
-        nome: petSelecionado.nome,
-        especie: petSelecionado.especie,
-        idade: petSelecionado.idade,
+        nome: petSelecionado.nome || '',
+        especie: petSelecionado.especie || '',
+        idade: petSelecionado.idade || 0,
         raca: petSelecionado.raca || '',
       })
 
@@ -84,11 +84,11 @@ export const FormularioPet = () => {
   const validarFormulario = (): boolean => {
     const erros: Record<string, string> = {}
 
-    if (!formulario.nome.trim()) {
+    if (!formulario.nome?.trim()) {
       erros.nome = 'Nome é obrigatório'
     }
 
-    if (!formulario.especie.trim()) {
+    if (!formulario.especie?.trim()) {
       erros.especie = 'Espécie é obrigatória'
     }
 
@@ -107,26 +107,26 @@ export const FormularioPet = () => {
       return
     }
 
-    let petCriado
+    let petAtualizado
 
     if (modoEdicao && id) {
-      petCriado = await atualizarPet(Number(id), formulario)
+      petAtualizado = await atualizarPet(Number(id), formulario)
     } else {
-      petCriado = await criarPet(formulario)
+      petAtualizado = await criarPet(formulario)
     }
 
-    if (petCriado) {
+    if (petAtualizado) {
       if (arquivoFoto) {
         setUploadandoFoto(true)
         try {
-          await adicionarFoto(petCriado.id, arquivoFoto)
+          await adicionarFoto(petAtualizado.id, arquivoFoto)
         } catch (error) {
           console.error('Erro ao fazer upload da foto:', error)
         } finally {
           setUploadandoFoto(false)
         }
       }
-      navigate(`/pets/${petCriado.id}`)
+      navigate(`/pets/${petAtualizado.id}`)
     }
   }
 
