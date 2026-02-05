@@ -8,7 +8,15 @@ export const autenticacaoServico = {
   },
 
   async renovarToken(token: string): Promise<TokenRefreshResponse> {
-    const response = await api.put<TokenRefreshResponse>('/autenticacao/refresh', { token })
+    const response = await api.put<TokenRefreshResponse>(
+      '/autenticacao/refresh',
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
     return response.data
   },
 

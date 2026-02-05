@@ -27,6 +27,33 @@ export const useTutoresFachada = () => {
         totalElementos: resposta.totalElements,
         tamanhoPagina: resposta.size,
       })
+
+      const semFotos = resposta.content.filter((tutor) => !tutor.fotos || tutor.fotos.length === 0)
+      if (semFotos.length > 0) {
+        const detalhes = await Promise.all(
+          semFotos.map(async (tutor) => {
+            try {
+              return await tutorServico.buscarPorId(tutor.id)
+            } catch {
+              return null
+            }
+          })
+        )
+        const fotosPorId = new Map(
+          detalhes
+            .filter((t): t is TutorResponseComPets => Boolean(t))
+            .map((t) => [t.id, t.fotos])
+        )
+        if (fotosPorId.size > 0) {
+          setTutores((atual) =>
+            atual.map((tutor) =>
+              fotosPorId.has(tutor.id)
+                ? { ...tutor, fotos: fotosPorId.get(tutor.id) }
+                : tutor
+            )
+          )
+        }
+      }
     } catch (error) {
       setErro('Erro ao buscar tutores. Tente novamente.')
     } finally {
@@ -47,6 +74,27 @@ export const useTutoresFachada = () => {
       return null
     } finally {
       setCarregando(false)
+    }
+  }, [])
+
+  const refrescarTutorNaLista = useCallback(async (id: number) => {
+    try {
+      const resposta = await tutorServico.buscarPorId(id)
+      setTutores((atual) =>
+        atual.map((tutor) =>
+          tutor.id === id
+            ? { ...tutor, fotos: resposta.fotos ?? tutor.fotos }
+            : tutor
+        )
+      )
+      setTutorSelecionado((atual) =>
+        atual && atual.id === id
+          ? { ...atual, fotos: resposta.fotos ?? atual.fotos }
+          : atual
+      )
+      return resposta
+    } catch {
+      return null
     }
   }, [])
 
@@ -167,6 +215,7 @@ export const useTutoresFachada = () => {
     // Ações
     buscarTutores,
     buscarTutorPorId,
+    refrescarTutorNaLista,
     criarTutor,
     atualizarTutor,
     excluirTutor,

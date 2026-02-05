@@ -18,6 +18,7 @@ export const FormularioTutor = () => {
   const [errosFormulario, setErrosFormulario] = useState<Record<string, string>>({})
   const [arquivoFoto, setArquivoFoto] = useState<File | null>(null)
   const [previewFoto, setPreviewFoto] = useState<string | null>(null)
+  const [uploadandoFoto, setUploadandoFoto] = useState(false)
 
   const {
     tutorSelecionado,
@@ -49,7 +50,12 @@ export const FormularioTutor = () => {
       })
 
       if (tutorSelecionado.fotos && tutorSelecionado.fotos.length > 0) {
-        setPreviewFoto(tutorSelecionado.fotos[0].url)
+        try {
+          const fotosOrdenadas = [...tutorSelecionado.fotos].sort((a, b) => (b.id || 0) - (a.id || 0))
+          setPreviewFoto(fotosOrdenadas[0]?.url || null)
+        } catch {
+          setPreviewFoto(null)
+        }
       }
     }
   }, [tutorSelecionado, modoEdicao])
@@ -120,10 +126,36 @@ export const FormularioTutor = () => {
 
     if (tutorCriado) {
       if (arquivoFoto) {
-        const resultadoUpload = await adicionarFoto(tutorCriado.id, arquivoFoto)
-        if (!resultadoUpload) {
-          window.scrollTo({ top: 0, behavior: 'smooth' })
+        setUploadandoFoto(true)
+        try {
+          const resultadoUpload = await adicionarFoto(tutorCriado.id, arquivoFoto)
+          if (!resultadoUpload || !resultadoUpload.id) {
+            console.error('Falha no upload: Resposta inválida', resultadoUpload)
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+            alert('Erro ao salvar foto: O servidor não retornou a confirmação do upload.')
+            return
+          }
+        } catch (error) {
+          console.error('Erro ao fazer upload da foto:', error)
           return
+        } finally {
+          setUploadandoFoto(false)
+        }
+        const aguardarFotoPersistir = async (): Promise<boolean> => {
+          const delays = [500, 1000, 1000, 2000, 2000]
+          for (const delay of delays) {
+            await new Promise((resolve) => setTimeout(resolve, delay))
+            const atualizado = await buscarTutorPorId(tutorCriado.id)
+            if (atualizado?.fotos && atualizado.fotos.length > 0) {
+              return true
+            }
+          }
+          return false
+        }
+        const persistiu = await aguardarFotoPersistir()
+        if (!persistiu) {
+          console.warn('Upload retornou 2xx, mas a API não retornou a foto no GET /v1/tutores/{id}')
+          alert('Upload feito, mas a API não retornou a foto. Tente recarregar.')
         }
       }
       navigate(`/tutores/${tutorCriado.id}`)
@@ -170,7 +202,7 @@ export const FormularioTutor = () => {
                 Foto
               </label>
               <div className="flex items-center gap-4">
-                <div className="h-32 w-32 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
+                <div className="h-32 w-32 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden relative">
                   {previewFoto ? (
                     <img
                       src={previewFoto}
@@ -180,6 +212,11 @@ export const FormularioTutor = () => {
                   ) : (
                     <span className="text-gray-400 text-4xl">👤</span>
                   )}
+                  {uploadandoFoto && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                      <div className="text-white text-sm">Enviando...</div>
+                    </div>
+                  )}
                 </div>
                 <div className="flex flex-col gap-1">
                   <input
@@ -188,6 +225,7 @@ export const FormularioTutor = () => {
                     accept="image/*"
                     onChange={handleFotoChange}
                     className="sr-only"
+                    disabled={uploadandoFoto || carregando}
                   />
                   <label
                     htmlFor="foto-tutor"
@@ -233,10 +271,10 @@ export const FormularioTutor = () => {
 
             {/* Botões */}
             <div className="flex gap-3 pt-4">
-              <Botao type="submit" disabled={carregando}>
+              <Botao type="submit" disabled={carregando || uploadandoFoto}>
                 {carregando ? 'Salvando...' : modoEdicao ? 'Salvar Alterações' : 'Cadastrar Tutor'}
               </Botao>
-              <Botao type="button" variante="secundario" onClick={handleVoltar}>
+              <Botao type="button" variante="secundario" onClick={handleVoltar} disabled={uploadandoFoto || carregando}>
                 Cancelar
               </Botao>
             </div>

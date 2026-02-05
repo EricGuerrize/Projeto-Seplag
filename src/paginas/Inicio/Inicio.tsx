@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { usePetsFachada } from '../../fachadas'
 import { Cartao, Carregando, Entrada, Botao, Rodape } from '../../componentes'
@@ -6,15 +6,18 @@ import { useAuth } from '../../hooks/useAuth'
 
 export const Inicio = () => {
   const [busca, setBusca] = useState('')
+  const [falhaImagemPorId, setFalhaImagemPorId] = useState<Record<number, string>>({})
+  const tentativasImg = useRef<Set<number>>(new Set())
   const navigate = useNavigate()
   const { logout } = useAuth()
-  
+
   const {
     pets,
     carregando,
     erro,
     paginacao,
     buscarPets,
+    refrescarPetNaLista,
   } = usePetsFachada()
 
   useEffect(() => {
@@ -52,6 +55,16 @@ export const Inicio = () => {
 
   const handleVerTutores = () => {
     navigate('/tutores')
+  }
+
+  const handleImagemErro = async (petId: number, fotoUrl: string) => {
+    if (!fotoUrl) return
+    if (!tentativasImg.current.has(petId)) {
+      tentativasImg.current.add(petId)
+      await refrescarPetNaLista(petId)
+      return
+    }
+    setFalhaImagemPorId((prev) => ({ ...prev, [petId]: fotoUrl }))
   }
 
   return (
@@ -112,41 +125,53 @@ export const Inicio = () => {
         {!carregando && pets.length > 0 && (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {pets.map((pet) => (
-                <Cartao
-                  key={pet.id}
-                  onClick={() => handleVerDetalhes(pet.id)}
-                  className="hover:border-blue-500"
-                >
-                  {/* Foto do pet */}
-                  <div className="h-48 bg-gray-200 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
-                    {pet.fotos && pet.fotos.length > 0 ? (
-                      <img
-                        src={(() => {
-                          const foto = pet.fotos[pet.fotos.length - 1]
-                          const sep = foto.url.includes('?') ? '&' : '?'
-                          return `${foto.url}${sep}t=${foto.id}`
-                        })()}
-                        alt={pet.nome}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <span className="text-gray-400 text-4xl">🐾</span>
-                    )}
-                  </div>
+              {pets.map((pet) => {
+                const fotoUrl = (() => {
+                  try {
+                    const fotos = pet.fotos || []
+                    if (fotos.length === 0) return ''
+                    const fotosOrdenadas = [...fotos].sort((a, b) => (b.id || 0) - (a.id || 0))
+                    const foto = fotosOrdenadas[0]
+                    if (!foto?.url) return ''
+                    return foto.url
+                  } catch {
+                    return ''
+                  }
+                })()
+                const falhou = fotoUrl && falhaImagemPorId[pet.id] === fotoUrl
+                return (
+                  <Cartao
+                    key={pet.id}
+                    onClick={() => handleVerDetalhes(pet.id)}
+                    className="hover:border-blue-500"
+                  >
+                    {/* Foto do pet */}
+                    <div className="h-48 bg-gray-200 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
+                      {fotoUrl && !falhou ? (
+                        <img
+                          src={fotoUrl}
+                          alt={pet.nome}
+                          className="w-full h-full object-cover"
+                          onError={() => handleImagemErro(pet.id, fotoUrl)}
+                        />
+                      ) : (
+                        <span className="text-gray-400 text-4xl">🐾</span>
+                      )}
+                    </div>
 
-                  {/* Informações do pet */}
-                  <h3 className="font-semibold text-lg text-gray-800">
-                    {pet.nome}
-                  </h3>
-                  <p className="text-gray-600 text-sm">
-                    {pet.especie} • {pet.idade} {pet.idade === 1 ? 'ano' : 'anos'}
-                  </p>
-                  {pet.raca && (
-                    <p className="text-gray-500 text-sm">{pet.raca}</p>
-                  )}
-                </Cartao>
-              ))}
+                    {/* Informações do pet */}
+                    <h3 className="font-semibold text-lg text-gray-800">
+                      {pet.nome}
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      {pet.especie} • {pet.idade} {pet.idade === 1 ? 'ano' : 'anos'}
+                    </p>
+                    {pet.raca && (
+                      <p className="text-gray-500 text-sm">{pet.raca}</p>
+                    )}
+                  </Cartao>
+                )
+              })}
             </div>
 
             {/* Paginação */}

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTutoresFachada } from '../../fachadas'
 import { petServico } from '../../servicos/petServico'
@@ -11,6 +11,8 @@ export const DetalhesTutor = () => {
   const [modalVincularAberto, setModalVincularAberto] = useState(false)
   const [petsDisponiveis, setPetsDisponiveis] = useState<PetResponse[]>([])
   const [carregandoPets, setCarregandoPets] = useState(false)
+  const [falhaImagemUrl, setFalhaImagemUrl] = useState<string | null>(null)
+  const tentativaImagem = useRef(false)
 
   const {
     tutorSelecionado,
@@ -23,6 +25,17 @@ export const DetalhesTutor = () => {
     limparTutorSelecionado,
   } = useTutoresFachada()
 
+  const fotoUrl = (() => {
+    try {
+      if (!tutorSelecionado?.fotos || tutorSelecionado.fotos.length === 0) return ''
+      const fotosOrdenadas = [...tutorSelecionado.fotos].sort((a, b) => b.id - a.id)
+      const foto = fotosOrdenadas[0]
+      return foto?.url || ''
+    } catch {
+      return ''
+    }
+  })()
+
   useEffect(() => {
     if (id) {
       buscarTutorPorId(Number(id))
@@ -31,16 +44,26 @@ export const DetalhesTutor = () => {
     return () => {
       limparTutorSelecionado()
     }
-  }, [id])
+  }, [id, buscarTutorPorId, limparTutorSelecionado])
 
   useEffect(() => {
-    if (tutorSelecionado?.fotos) {
-      // #region agent log
-      const first = tutorSelecionado.fotos[0]
-      fetch('http://127.0.0.1:7246/ingest/347cdc5a-4f6a-40c0-a44d-3cf8abd2d533', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'DetalhesTutor.tsx:tutorSelecionado.fotos', message: 'Displaying photo', data: { tutorId: tutorSelecionado.id, fotosCount: tutorSelecionado.fotos.length, firstUrl: first?.url, firstId: first?.id }, timestamp: Date.now(), sessionId: 'debug-session', hypothesisId: 'H5' }) }).catch(() => { });
-      // #endregion
+    if (fotoUrl) {
+      tentativaImagem.current = false
+      setFalhaImagemUrl(null)
     }
-  }, [tutorSelecionado])
+  }, [fotoUrl])
+
+  const handleImagemErro = async () => {
+    if (!fotoUrl || !id) return
+    if (!tentativaImagem.current) {
+      tentativaImagem.current = true
+      await buscarTutorPorId(Number(id))
+      return
+    }
+    setFalhaImagemUrl(fotoUrl)
+  }
+
+
 
   const handleVoltar = () => {
     navigate('/tutores')
@@ -146,23 +169,17 @@ export const DetalhesTutor = () => {
       <main className="max-w-4xl mx-auto px-4 py-8 flex-1">
         <Cartao className="p-6">
           <div className="flex flex-col md:flex-row gap-6">
-            {/* Foto do tutor */}
-            <div className="flex-shrink-0">
-              <div className="h-48 w-48 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden mx-auto">
-                {tutorSelecionado.fotos && tutorSelecionado.fotos.length > 0 ? (
-                  <img
-                    src={(() => {
-                      const foto = tutorSelecionado.fotos![tutorSelecionado.fotos!.length - 1]
-                      const sep = foto.url.includes('?') ? '&' : '?'
-                      return `${foto.url}${sep}t=${foto.id}`
-                    })()}
-                    alt={tutorSelecionado.nome}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <span className="text-gray-400 text-6xl">👤</span>
-                )}
-              </div>
+            <div className="h-48 w-48 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden mx-auto">
+              {fotoUrl && falhaImagemUrl !== fotoUrl ? (
+                <img
+                  src={fotoUrl}
+                  alt={tutorSelecionado.nome}
+                  className="w-full h-full object-cover"
+                  onError={handleImagemErro}
+                />
+              ) : (
+                <span className="text-gray-400 text-6xl">👤</span>
+              )}
             </div>
 
             {/* Informações do tutor */}

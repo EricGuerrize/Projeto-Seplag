@@ -15,6 +15,8 @@ A estrutura está organizada em pastas: `componentes` (Botao, Entrada, Cartao, C
 
 As funcionalidades incluem login, listagem de pets com paginação (10 por página) e busca por nome, tela de detalhes do pet com dados do tutor quando houver vínculo (e mensagem quando não houver), cadastro e edição de pet com upload de foto, listagem de tutores, detalhes do tutor com pets vinculados e opção de desvincular, e cadastro/edição de tutor com máscara de telefone e upload de foto.
 
+
+
 ---
 
 ## Como executar
@@ -60,7 +62,7 @@ Alternativamente, use docker-compose: `docker-compose up -d`. A aplicação fica
 URL base: https://pet-manager-api.geia.vip  
 Documentação (Swagger): https://pet-manager-api.geia.vip/q/swagger-ui/
 
-A aplicação utiliza os endpoints de autenticação (login e refresh), CRUD de pets em `/v1/pets` (incluindo upload de foto), e CRUD de tutores em `/v1/tutores` (foto e vinculação/desvinculação de pets). As credenciais para teste são as fornecidas pela organização do processo seletivo.
+A aplicação utiliza os endpoints de autenticação (login e refresh), CRUD de pets em `/v1/pets` (incluindo upload de foto), e CRUD de tutores em `/v1/tutores` (foto e vinculação/desvinculação de pets). As credenciais para teste estão no Swagger da API (ex.: `admin/admin`).
 
 ---
 

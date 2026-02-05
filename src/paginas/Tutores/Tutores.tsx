@@ -1,13 +1,15 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTutoresFachada } from '../../fachadas'
 import { Cartao, Carregando, Entrada, Botao, Rodape } from '../../componentes'
 
 export const Tutores = () => {
   const [busca, setBusca] = useState('')
+  const [falhaImagemPorId, setFalhaImagemPorId] = useState<Record<number, string>>({})
+  const tentativasImg = useRef<Set<number>>(new Set())
   const navigate = useNavigate()
 
-  const { tutores, carregando, erro, paginacao, buscarTutores } = useTutoresFachada()
+  const { tutores, carregando, erro, paginacao, buscarTutores, refrescarTutorNaLista } = useTutoresFachada()
 
   useEffect(() => {
     buscarTutores(0)
@@ -39,6 +41,16 @@ export const Tutores = () => {
 
   const handleVoltar = () => {
     navigate('/')
+  }
+
+  const handleImagemErro = async (tutorId: number, fotoUrl: string) => {
+    if (!fotoUrl) return
+    if (!tentativasImg.current.has(tutorId)) {
+      tentativasImg.current.add(tutorId)
+      await refrescarTutorNaLista(tutorId)
+      return
+    }
+    setFalhaImagemPorId((prev) => ({ ...prev, [tutorId]: fotoUrl }))
   }
 
   if (carregando && tutores.length === 0) {
@@ -101,44 +113,50 @@ export const Tutores = () => {
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {tutores.map((tutor) => (
-                <Cartao
-                  key={tutor.id}
-                  className="cursor-pointer hover:shadow-lg transition-shadow"
-                  onClick={() => handleVerDetalhes(tutor.id)}
-                >
-                  <div className="p-4">
-                    <div className="flex items-center gap-4">
-                      <div className="h-16 w-16 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
-                        {tutor.fotos && tutor.fotos.length > 0 ? (
-                          <img
-                            src={(() => {
-                              const foto = tutor.fotos![tutor.fotos!.length - 1]
-                              const sep = foto.url.includes('?') ? '&' : '?'
-                              return `${foto.url}${sep}t=${foto.id}`
-                            })()}
-                            alt={tutor.nome}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <span className="text-gray-400 text-2xl">👤</span>
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-lg font-semibold text-gray-800 truncate">
-                          {tutor.nome}
-                        </h3>
-                        {tutor.telefone && (
-                          <p className="text-sm text-gray-600">{tutor.telefone}</p>
-                        )}
-                        {tutor.endereco && (
-                          <p className="text-sm text-gray-500 truncate">{tutor.endereco}</p>
-                        )}
+              {tutores.map((tutor) => {
+                const fotoUrl = (() => {
+                  if (!tutor.fotos || tutor.fotos.length === 0) return ''
+                  const fotosOrdenadas = [...tutor.fotos].sort((a, b) => b.id - a.id)
+                  const foto = fotosOrdenadas[0]
+                  return foto?.url || ''
+                })()
+                const falhou = fotoUrl && falhaImagemPorId[tutor.id] === fotoUrl
+                return (
+                  <Cartao
+                    key={tutor.id}
+                    className="cursor-pointer hover:shadow-lg transition-shadow"
+                    onClick={() => handleVerDetalhes(tutor.id)}
+                  >
+                    <div className="p-4">
+                      <div className="flex items-center gap-4">
+                        <div className="h-16 w-16 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                          {fotoUrl && !falhou ? (
+                            <img
+                              src={fotoUrl}
+                              alt={tutor.nome}
+                              className="w-full h-full object-cover"
+                              onError={() => handleImagemErro(tutor.id, fotoUrl)}
+                            />
+                          ) : (
+                            <span className="text-gray-400 text-2xl">👤</span>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg font-semibold text-gray-800 truncate">
+                            {tutor.nome}
+                          </h3>
+                          {tutor.telefone && (
+                            <p className="text-sm text-gray-600">{tutor.telefone}</p>
+                          )}
+                          {tutor.endereco && (
+                            <p className="text-sm text-gray-500 truncate">{tutor.endereco}</p>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Cartao>
-              ))}
+                  </Cartao>
+                )
+              })}
             </div>
 
             {/* Paginação */}

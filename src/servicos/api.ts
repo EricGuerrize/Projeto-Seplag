@@ -19,12 +19,16 @@ api.interceptors.request.use(
     // #region agent log
     if (config.data instanceof FormData) {
       const ct = config.headers['Content-Type']
-      fetch('http://127.0.0.1:7246/ingest/347cdc5a-4f6a-40c0-a44d-3cf8abd2d533',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api.ts:request:FormData',message:'FormData request',data:{url:config.url,contentType:ct},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1',runId:'post-fix'})}).catch(()=>{});
+      fetch('http://127.0.0.1:7246/ingest/347cdc5a-4f6a-40c0-a44d-3cf8abd2d533', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'api.ts:request:FormData', message: 'FormData request', data: { url: config.url, contentType: ct }, timestamp: Date.now(), sessionId: 'debug-session', hypothesisId: 'H1', runId: 'post-fix' }) }).catch(() => { });
     }
     // #endregion
     // Backend @Consumes multipart: remove Content-Type para axios definir multipart/form-data com boundary
     if (config.data instanceof FormData) {
-      delete config.headers['Content-Type']
+      if (config.headers && typeof (config.headers as any).delete === 'function') {
+        ; (config.headers as any).delete('Content-Type')
+      } else {
+        delete config.headers['Content-Type']
+      }
     }
     return config
   },
@@ -47,7 +51,12 @@ api.interceptors.response.use(
         if (refreshToken) {
           const response = await axios.put(
             `${API_BASE_URL}/autenticacao/refresh`,
-            { token: refreshToken }
+            {},
+            {
+              headers: {
+                Authorization: `Bearer ${refreshToken}`,
+              },
+            }
           )
 
           const { token } = response.data
